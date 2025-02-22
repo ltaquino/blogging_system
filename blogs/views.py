@@ -3,10 +3,11 @@ from django.views.generic import ListView, DetailView, CreateView
 from .models import Post, Author, Comment
 from .forms import CommentForm
 from django.shortcuts import render, redirect, get_object_or_404
-from rest_framework import generics, status
+from rest_framework import generics,permissions, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from .serializers import PostSerializer,PostDetailSerializer,CommentCreateSerializer
+from .serializers import PostSerializer,PostDetailSerializer,CommentCreateSerializer,PostCreateSerializer
+from django.utils import timezone
 
 class PostListView(ListView):
     model = Post
@@ -98,3 +99,24 @@ class CommentCreateAPIView(generics.CreateAPIView):
             return super().create(request, *args, **kwargs)
         except ValidationError as exc:
             return Response({'detail': exc.detail}, status=status.HTTP_400_BAD_REQUEST)
+
+
+#task 4
+class PostCreateAPIView(generics.CreateAPIView):
+    serializer_class = PostCreateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        try:
+            author = Author.objects.get(user=self.request.user)
+        except Author.DoesNotExist:
+            raise ValidationError("You are not registered as an author and cannot create posts.")
+        
+        serializer.save(author=author, active=True)
+    
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response(
+            {"message": "Post created successfully!", "data": response.data},
+            status=status.HTTP_201_CREATED
+        )
