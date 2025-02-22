@@ -3,8 +3,10 @@ from django.views.generic import ListView, DetailView, CreateView
 from .models import Post, Author, Comment
 from .forms import CommentForm
 from django.shortcuts import render, redirect, get_object_or_404
-from rest_framework import generics
-from .serializers import PostSerializer,PostDetailSerializer
+from rest_framework import generics, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+from .serializers import PostSerializer,PostDetailSerializer,CommentCreateSerializer
 
 class PostListView(ListView):
     model = Post
@@ -75,3 +77,24 @@ class PostListAPIView(generics.ListAPIView):
 class PostRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Post.objects.all().select_related('author')
     serializer_class = PostDetailSerializer
+
+
+#task3
+class CommentCreateAPIView(generics.CreateAPIView):
+    serializer_class = CommentCreateSerializer
+
+    def perform_create(self, serializer):
+        post_pk = self.kwargs.get('post_pk')
+        post = get_object_or_404(Post, pk=post_pk)
+        
+        if not post.active:
+            raise ValidationError("Cannot add comment to an inactive post.")
+        
+        user = self.request.user if self.request.user.is_authenticated else None
+        serializer.save(post=post, user=user)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except ValidationError as exc:
+            return Response({'detail': exc.detail}, status=status.HTTP_400_BAD_REQUEST)
