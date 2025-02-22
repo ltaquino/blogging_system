@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+              <form method="post">
+                <div class="card-header">
+                Create a New Post
+              </div>
+                <div class="card-body">
+                 
+                    {% csrf_token %}
+
+                    <div class="form-group mb-3">
+                      <label for="title" class="font-weight-bold">Title:</label>
+                      <input 
+                        type="text" 
+                        name="title" 
+                        id="title" 
+                        maxlength="200" 
+                        required 
+                        class="form-control" 
+                        placeholder="Enter post title">
+                    </div>
+            
+                    <div class="form-group mb-3">
+                      <label for="content" class="font-weight-bold">Content:</label>
+                      <textarea 
+                        name="content" 
+                        id="content" 
+                        rows="5" 
+                        required 
+                        class="form-control" 
+                        placeholder="Write your content here..."></textarea>
+                    </div>
+            
+                    <div class="form-group mb-3">
+                      <label for="author" class="font-weight-bold">Author:</label>
+                      <select name="author" id="author" required class="form-control">
+                        <option value="" disabled selected>Select an author</option>
+                        {% for author in authors %}
+                          <option value="{{ author.id }}">{{ author.name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+            
+                    <div class="form-group mb-3">
+                      <label for="status" class="font-weight-bold">Status:</label>
+                      <select name="status" id="status" required class="form-control">
+                        <option value="draft">Draft</option>
+                        <option value="published">Published</option>
+                      </select>
+                    </div>
+            
+                    <div class="form-group form-check mb-4">
+                      <input type="checkbox" name="active" id="active" class="form-check-input">
+                      <label for="active" class="form-check-label font-weight-bold">Active</label>
+                    </div>
+
+                    
+                </div>
+                <div class="card-footer text-right">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form>
+
+              </div>
+
+        </div>
+        <div class="col-md-12">
+          <a href="{% url 'blogs:post-list' %}">Back to list</a>
+        </div>
+
+    </div>
+  </div>
+{% endblock %}
