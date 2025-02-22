@@ -67,12 +67,27 @@ class PostListAPIView(generics.ListAPIView):
         author_name = request.query_params.get('author_name')
         published_date = request.query_params.get('published_date')
 
+        start_date = self.request.data.get("start_date")
+        end_date = self.request.data.get("end_date")
+
         if title:
             qs = qs.filter(title__icontains=title)
         if author_name:
             qs = qs.filter(author__name__icontains=author_name)
-        if published_date:
-            qs = qs.filter(published_date__date=published_date)
+        # if published_date:
+        #     qs = qs.filter(published_date__date=published_date)
+
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+        if start_date and end_date:
+            qs = qs.filter(
+                published_date__date__gte=start_date,
+                published_date__date__lte=end_date
+            )
+        elif start_date:
+            qs = qs.filter(published_date__date__gte=start_date)
+        elif end_date:
+            qs = qs.filter(published_date__date__lte=end_date)
         
         return qs
 
