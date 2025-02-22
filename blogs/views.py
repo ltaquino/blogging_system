@@ -134,3 +134,9 @@ class PostUpdateAPIView(generics.RetrieveUpdateAPIView):
         obj = super().get_object()
         self.check_object_permissions(self.request, obj)
         return obj
+
+
+#task6
+class PostDeleteAPIView(generics.DestroyAPIView):
+    queryset = Post.objects.all().select_related('author')
+    permission_classes = [permissions.IsAuthenticated, IsPostCreator]
