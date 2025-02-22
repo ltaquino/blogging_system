@@ -4,7 +4,7 @@ from .models import Post, Author, Comment
 from .forms import CommentForm
 from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework import generics
-from .serializers import PostSerializer
+from .serializers import PostSerializer,PostDetailSerializer
 
 class PostListView(ListView):
     model = Post
@@ -50,6 +50,8 @@ def add_comment(request, pk):
     return redirect('blogs:post-detail', pk=post.pk)
 
 
+#2. REST API with Django REST Framework
+
 class PostListAPIView(generics.ListAPIView):
     serializer_class = PostSerializer
 
@@ -68,3 +70,8 @@ class PostListAPIView(generics.ListAPIView):
             qs = qs.filter(published_date__date=published_date)
         
         return qs
+
+
+class PostRetrieveAPIView(generics.RetrieveAPIView):
+    queryset = Post.objects.all().select_related('author')
+    serializer_class = PostDetailSerializer
