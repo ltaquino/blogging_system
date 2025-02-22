@@ -37,3 +37,10 @@ class PostCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['title', 'content','published_date']
+
+
+#task5
+class PostEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'active']

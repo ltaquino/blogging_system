@@ -6,8 +6,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework import generics,permissions, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from .serializers import PostSerializer,PostDetailSerializer,CommentCreateSerializer,PostCreateSerializer
+from .serializers import PostSerializer,PostDetailSerializer,CommentCreateSerializer,PostCreateSerializer,PostEditSerializer
 from django.utils import timezone
+from .permissions.post_permissions import IsPostCreator
+
 
 class PostListView(ListView):
     model = Post
@@ -120,3 +122,15 @@ class PostCreateAPIView(generics.CreateAPIView):
             {"message": "Post created successfully!", "data": response.data},
             status=status.HTTP_201_CREATED
         )
+
+
+#task 5
+class PostUpdateAPIView(generics.RetrieveUpdateAPIView):
+    queryset = Post.objects.all().select_related('author')
+    serializer_class = PostEditSerializer
+    permission_classes = [permissions.IsAuthenticated, IsPostCreator]
+
+    def get_object(self):
+        obj = super().get_object()
+        self.check_object_permissions(self.request, obj)
+        return obj
