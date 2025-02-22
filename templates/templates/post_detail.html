@@ -1,23 +1,38 @@
-{% extends 'base.html' %}
-{% block content %}
-  <div class="container mt-4">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h4 class="card-title">{{ post.title }}</h4>
-                    <p class="card-text">{{ post.content }}</p>
-                </div>
-                <div class="card-footer text-muted">
-                    Posted on {{ post.published_date }} by {{ post.author.name }}
-                </div>
-            </div>
-
-        </div>
-        <div class="col-md-12">
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card mb-4">
+        <div class="card-header">
           <a href="{% url 'blogs:post-list' %}">Back to list</a>
         </div>
-
+        <div class="card-body">
+          <h4 class="card-title">{{ post.title }}</h4>
+          <p class="card-text">{{ post.content }}</p>
+        </div>
+        <div class="card-footer text-muted">
+          Posted on {{ post.published_date }} by {{ post.author.name }}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <h2>Comments</h2>
+      {% if post.comments.all %}
+      <ul>
+        {% for comment in post.comments.all %}
+        <li>
+          <p>{{ comment.content }}</p>
+          <small
+            >By: {% if comment.user %} {{ comment.user.first_name }} {{ comment.user.last_name }} {% else %}
+            Anonymous {% endif %} on {{ comment.created }}</small
+          >
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No comments yet.</p>
+      {% endif %}
     </div>
   </div>
+</div>
 {% endblock %}

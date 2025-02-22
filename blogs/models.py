@@ -55,4 +55,4 @@ class Comment(models.Model):
     created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.post
+        return self.content
