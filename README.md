@@ -23,6 +23,10 @@
 #### To create super user
 `docker-compose exec django-web python manage.py createsuperuser`
 
+
+#### To check the system, open your browser and go to this link
+`http://localhost:8000/`
+
 #### to run the test case
 `docker-compose exec django-web pytest -v`
 
