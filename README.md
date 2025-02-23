@@ -1,5 +1,5 @@
 
-# Project Title
+# Blogging System
 
 #### Clone the repository
 `git clone https://github.com/ltaquino/blogging_system`
