@@ -13,6 +13,10 @@
 #### To build and start you container
 `docker-compose up --build`
 
+#### If error says django.db.utils.OperationalError: unable to open database file, run this command
+`docker-compose exec django-web chown -R www-data:www-data /app`
+
+
 #### To apply database migration , open new terminal and change directory to the project root
 `docker-compose exec django-web python manage.py migrate`
 
